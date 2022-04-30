@@ -128,19 +128,4 @@ describe('Node Server Request Listener Function', function() {
     expect(res._ended).to.equal(true);
   });
 
-  // it('Should answer DELETE requests to /classes/messages with 440 code', function() {
-  //   var stubMsg = {
-  //     username: 'Jono',
-  //     text: 'Do my bidding!'
-  //   };
-  //   var req = new stubs.request('/classes/messages', 'DETELE', stubMsg);
-  //   var res = new stubs.response();
-
-  //   handler.requestHandler(req, res);
-
-  //   expect(res._responseCode).to.equal(440);
-  //   expect(res._ended).to.equal(true);
-  // });
-
-
 });
