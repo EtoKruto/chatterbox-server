@@ -24,6 +24,19 @@ describe('server', function() {
       done();
     });
   });
+  it('should respond to GET requests for /pokemon with a 420 status code', function(done) {
+    request('http://127.0.0.1:3000/pokemon', function(error, response, body) {
+      expect(response.statusCode).to.equal(420);
+      done();
+    });
+  });
+
+  // it('Should respond to GET requests for /OK with a 100 status code', function(done) {
+  //   request('http://127.0.0.1:3000/OK', function(error, response, body) {
+  //     expect(response.statusCode).to.equal(100);
+  //     done();
+  //   });
+  // });
 
   it('should accept POST requests to /classes/messages', function(done) {
     var requestParams = {method: 'POST',
@@ -35,6 +48,20 @@ describe('server', function() {
 
     request(requestParams, function(error, response, body) {
       expect(response.statusCode).to.equal(201);
+      done();
+    });
+  });
+
+  it('should accept DELETE requests to /classes/messages', function(done) {
+    var requestParams = {method: 'DELETE',
+      uri: 'http://127.0.0.1:3000/classes/messages',
+      json: {
+        username: 'Jono',
+        text: 'Do my bidding!'}
+    };
+
+    request(requestParams, function(error, response, body) {
+      expect(response.statusCode).to.equal(440);
       done();
     });
   });
@@ -51,6 +78,10 @@ describe('server', function() {
       // Now if we request the log, that message we posted should be there:
       request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
         var messages = JSON.parse(body);
+        // console.log('messagesInSpec', messages);
+        // console.log('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
+        // console.log('usernameInSpec', messages[0].username);
+        // console.log('TextInSpec', messages[0].text);
         expect(messages[0].username).to.equal('Jono');
         expect(messages[0].text).to.equal('Do my bidding!');
         done();
@@ -64,6 +95,5 @@ describe('server', function() {
       done();
     });
   });
-
 
 });

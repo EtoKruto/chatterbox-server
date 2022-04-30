@@ -15,8 +15,13 @@ describe('Node Server Request Listener Function', function() {
     expect(res._ended).to.equal(true);
   });
 
+
   it('Should answer POST requests for /pokemon with a 420 status code', function() {
-    var req = new stubs.request('/pokemon', 'POST');
+    var stubMsg = {
+      username: 'Jono',
+      text: 'Do my bidding!'
+    };
+    var req = new stubs.request('/pokemon', 'POST', stubMsg);
     var res = new stubs.response();
 
     handler.requestHandler(req, res);
@@ -26,7 +31,7 @@ describe('Node Server Request Listener Function', function() {
   });
 
   it('Should answer GET requests for /OK with a 100 status code', function() {
-    var req = new stubs.request('/OK', 'POST');
+    var req = new stubs.request('/OK', 'GET');
     var res = new stubs.response();
 
     handler.requestHandler(req, res);
@@ -108,6 +113,18 @@ describe('Node Server Request Listener Function', function() {
     handler.requestHandler(req, res);
 
     expect(res._responseCode).to.equal(404);
+    expect(res._ended).to.equal(true);
+  });
+
+
+  it('Should answer POST requests with a 418 status code when message is not sending correctly', function() {
+    var stubMsg = {};
+    var req = new stubs.request('/classes/messages', 'POST', stubMsg);
+    var res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    expect(res._responseCode).to.equal(418);
     expect(res._ended).to.equal(true);
   });
 
