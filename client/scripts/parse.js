@@ -1,9 +1,9 @@
 var Parse = {
 
-  server: `http://127.0.0.1:3000/classes/messages`,
+  server: 'http://127.0.0.1:3000/classes/messages',
 
   create: function(message, successCB, errorCB = null) {
-
+    //client is posting something
     $.ajax({
       url: Parse.server,
       type: 'POST',
@@ -11,11 +11,11 @@ var Parse = {
       contentType: 'application/json',
       success: successCB,
       error: errorCB || function (error) {
-        console.error('chatterbox: Failed to create message', error);
+        console.error('chatterbox: Failed to screate message', error);
       }
     });
   },
-
+  //GET INFO
   readAll: function(successCB, errorCB = null) {
     $.ajax({
       url: Parse.server,
