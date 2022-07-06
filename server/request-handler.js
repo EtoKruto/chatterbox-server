@@ -1,3 +1,5 @@
+const {send404, sendRepsonse, collectData} = require('./utilities/js');
+const urlParser = require('url');
 /*************************************************************
 
 You should implement your request handler function in this file.
@@ -13,13 +15,7 @@ this file and include it in basic-server.js so that it actually works.
 **************************************************************/
 //request - client
 //i am the server - send the response back /behind the scence
-var defaultCorsHeaders = {
-  'access-control-allow-origin': '*',
-  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'access-control-allow-headers': 'content-type, accept, authorization',
-  'access-control-max-age': 10, // Seconds.
-  'allow': 'GET, POST, PUT, DELETE, OPTIONS'
-};
+
 
 var messages = [];
 var requestHandler = function(request, response) {
@@ -37,70 +33,91 @@ var requestHandler = function(request, response) {
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
 
-  console.log('Serving request type ' + request.method + ' for url ' + request.url);
-  var statusCode = 404;
-  // The outgoing status.
-  if (request.method === 'GET') {
-    if (request.url === '/classes/messages') {
-      console.log('we passed');
-      statusCode = 200;
-    } else if (request.url === '/pokemon') {
-      console.log('we got the pokemon');
-      statusCode = 420;
-    } else if (request.url === '/OK') {
-      console.log('we got the OK');
-      statusCode = 100;
-    }
-  }
-  if (request.method === 'DELETE' && request.url === '/classes/messages') {
-    statusCode = 440;
-  }
-
-  // console.log('Serving request type FOR DELETE????', request.method);
-
-  // console.log('statusCode FOR DELETE????', statusCode);
-
-  let data = '';
-  if (request.method === 'POST') {
-    if (request.url === '/pokemon') {
-      statusCode = 420;
+  const url = urlParser.parse(request.url).pathname;
+  if (url === '/classes/messages') {
+    if (request.method === 'GET') {
+      sendResponse(response, {results: messages });
+    } else if (request.method === 'POST') {
+      collectData(request, function(message) {
+        message.objectID = message.length;
+        message.push(message);
+        sendResponse(respond, message, {}, 201);
+      });
+    } else if (request, method === 'OPTIONS') {
+      sendRepsonse(response, undefined, defaultCorsHeaders);
     } else {
-      statusCode = 201;
+      send404(response);
     }
-    request.on('data', chunk => {
-      data += chunk;
-      var parsedData = JSON.parse(data);
-      if (JSON.stringify(parsedData) === '{}') {
-        statusCode = 418;
-      }
-      messages.push(parsedData);
-    });
-    request.on('end', () => {
-      response.end();
-    });
+  } else {
+    send404(response);
   }
+
+
+
+  // console.log('Serving request type ' + request.method + ' for url ' + request.url);
+  // var statusCode = 404;
+  // // The outgoing status.
+  // if (request.method === 'GET') {
+  //   if (request.url === '/classes/messages') {
+  //     console.log('we passed');
+  //     statusCode = 200;
+  //   } else if (request.url === '/pokemon') {
+  //     console.log('we got the pokemon');
+  //     statusCode = 420;
+  //   } else if (request.url === '/OK') {
+  //     console.log('we got the OK');
+  //     statusCode = 100;
+  //   }
+  // }
+  // if (request.method === 'DELETE' && request.url === '/classes/messages') {
+  //   statusCode = 440;
+  // }
+
+  // // console.log('Serving request type FOR DELETE????', request.method);
+
+  // // console.log('statusCode FOR DELETE????', statusCode);
+
+  // let data = '';
+  // if (request.method === 'POST') {
+  //   if (request.url === '/pokemon') {
+  //     statusCode = 420;
+  //   } else {
+  //     statusCode = 201;
+  //   }
+  //   request.on('data', chunk => {
+  //     data += chunk;
+  //     var parsedData = JSON.parse(data);
+  //     if (JSON.stringify(parsedData) === '{}') {
+  //       statusCode = 418;
+  //     }
+  //     messages.push(parsedData);
+  //   });
+  //   request.on('end', () => {
+  //     response.end();
+  //   });
+  // }
   //  else if (request.method === 'DELETE') {
   //   statusCode = 440;
   // }
-  // See the note below about CORS headers.
-  var headers = defaultCorsHeaders;
-  // Tell the client we are sending them plain text.
-  //
-  // You will need to change this if you are sending something
-  // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = 'text/plain';
-  // .writeHead() writes to the request line and headers of the response,
-  // which includes the status and all headers.
-  console.log('statusCode now is:', statusCode);
-  response.writeHead(statusCode, headers);
-  // Make sure to always call response.end() - Node may not send
-  // anything back to the client until you do. The string you pass to
-  // response.end() will be the body of the response - i.e. what shows
-  // up in the browser.
-  //
-  // Calling .end "flushes" the response's internal buffer, forcing
-  // node to actually send all the data over to the client.
-  response.end(JSON.stringify(messages));
+  // // See the note below about CORS headers.
+  // var headers = defaultCorsHeaders;
+  // // Tell the client we are sending them plain text.
+  // //
+  // // You will need to change this if you are sending something
+  // // other than plain text, like JSON or HTML.
+  // headers['Content-Type'] = 'text/plain';
+  // // .writeHead() writes to the request line and headers of the response,
+  // // which includes the status and all headers.
+  // console.log('statusCode now is:', statusCode);
+  // response.writeHead(statusCode, headers);
+  // // Make sure to always call response.end() - Node may not send
+  // // anything back to the client until you do. The string you pass to
+  // // response.end() will be the body of the response - i.e. what shows
+  // // up in the browser.
+  // //
+  // // Calling .end "flushes" the response's internal buffer, forcing
+  // // node to actually send all the data over to the client.
+  // response.end(JSON.stringify(messages));
 };
 // These headers will allow Cross-Origin Resource Sharing (CORS).
 // This code allows this server to talk to websites that
